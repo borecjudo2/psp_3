@@ -19,7 +19,7 @@ public class Main {
 class EchoServer extends Thread {
 
     private final DatagramSocket socket;
-    private final byte[] buf = new byte[1080];
+    private final byte[] buf = new byte[256];
 
     public EchoServer() throws SocketException {
         socket = new DatagramSocket(4445);
