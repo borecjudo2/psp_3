@@ -6,12 +6,11 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         new EchoServer().start();
         new EchoClient().start();
     }
@@ -44,15 +43,8 @@ class EchoServer extends Thread {
             String received
                 = new String(packet.getData(), 0, packet.getLength());
 
-            byte[] answer = checkOnPalindrome(received).getBytes(StandardCharsets.UTF_8);
-//            byte[] answer = checkOnPalindrome(received).getBytes();
-
-            DatagramPacket answerPacket = new DatagramPacket(answer, answer.length, address, port);
-            try {
-                socket.send(answerPacket);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String answer = checkOnPalindrome(received);
+            System.out.println(answer);
         }
         socket.close();
     }
@@ -61,7 +53,8 @@ class EchoServer extends Thread {
         String palindrome = "Word is palindrome";
         String notPalindrome = "Word isn't palindrome";
 
-        return word.equalsIgnoreCase(new StringBuffer(word).reverse().toString()) ? palindrome : notPalindrome;
+        return word.equalsIgnoreCase(new StringBuffer(word).reverse().toString()) ?
+            palindrome : notPalindrome;
     }
 
 }
@@ -75,17 +68,13 @@ class EchoClient {
         address = InetAddress.getByName("localhost");
     }
 
-    public void start() throws IOException {
+    public void start() throws IOException, InterruptedException {
         while (true) {
             byte[] buf = getWord();
             DatagramPacket packet
                 = new DatagramPacket(buf, buf.length, address, 4445);
             socket.send(packet);
-            packet = new DatagramPacket(buf, buf.length);
-            socket.receive(packet);
-            String received = new String(
-                packet.getData(), 0, packet.getLength());
-            System.out.println(received);
+            Thread.sleep(100L);
         }
     }
 
