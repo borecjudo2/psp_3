@@ -44,7 +44,7 @@ class EchoServer extends Thread {
                 = new String(packet.getData(), 0, packet.getLength());
 
             String answer = checkOnPalindrome(received);
-            System.out.println(answer);
+            System.out.println("Word is palindrome");
         }
         socket.close();
     }
